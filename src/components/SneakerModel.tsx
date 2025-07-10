@@ -1,15 +1,33 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { AnalysisUI } from "./AnalysisUI";
+
 interface SneakerModelProps {
   mousePosition: {
     x: number;
     y: number;
   };
   isLoaded: boolean;
+  isSynthesizing: boolean;
 }
-export function SneakerModel({ mousePosition, isLoaded }: SneakerModelProps) {
+
+const shoeImages = ["/shoe1.png", "/shoe2.png", "/shoe3.png"];
+
+export function SneakerModel({
+  mousePosition,
+  isLoaded,
+  isSynthesizing,
+}: SneakerModelProps) {
   const [isHovering, setIsHovering] = useState(false);
-  const imageUrl = "/shoe1.png";
+  const [currentShoeIndex, setCurrentShoeIndex] = useState(0);
+
+  useEffect(() => {
+    if (!isSynthesizing) {
+      const randomIndex = Math.floor(Math.random() * shoeImages.length);
+      setCurrentShoeIndex(randomIndex);
+    }
+  }, [isSynthesizing]);
+
   return (
     <motion.div
       className="relative"
@@ -76,14 +94,34 @@ export function SneakerModel({ mousePosition, isLoaded }: SneakerModelProps) {
           }}
         />
         {/* To use the 3D model, replace the image below with a 3D viewer (e.g., @react-three/fiber + @react-three/drei GLTF loader) */}
-        <img
-          src={imageUrl}
-          alt="AI Synthesized Sneaker"
-          className="w-full h-auto object-contain relative z-10"
-          style={{
-            filter: `drop-shadow(0 0 10px rgba(255,255,255,0.2))`,
-          }}
-        />
+        <AnimatePresence mode="wait">
+          {isSynthesizing ? (
+            <motion.div
+              key="loader"
+              className="absolute inset-0 flex items-center justify-center z-20"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-cyan-400"></div>
+            </motion.div>
+          ) : (
+            <motion.img
+              key={currentShoeIndex}
+              src={shoeImages[currentShoeIndex]}
+              alt="AI Synthesized Sneaker"
+              className="w-full h-auto object-contain relative z-10"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              style={{
+                filter: `drop-shadow(0 0 10px rgba(255,255,255,0.2))`,
+              }}
+            />
+          )}
+        </AnimatePresence>
+        {isSynthesizing && <AnalysisUI />}
         {/* Example placeholder for 3D model:
         <Canvas>
           <Suspense fallback={null}>

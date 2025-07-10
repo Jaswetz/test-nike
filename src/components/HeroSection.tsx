@@ -12,9 +12,9 @@ export function HeroSection() {
   });
   const [isLoaded, setIsLoaded] = useState(false);
   const [isHoveringTitle, setIsHoveringTitle] = useState(false);
-  const [showInactivityTooltip, setShowInactivityTooltip] = useState(false);
+  const [isSynthesizing, setIsSynthesizing] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
-  const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   // Handle mouse movement
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -22,34 +22,18 @@ export function HeroSection() {
         x: e.clientX / window.innerWidth - 0.5,
         y: e.clientY / window.innerHeight - 0.5,
       });
-      resetInactivityTimer();
     };
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
+
   // Load animations
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 500);
     return () => clearTimeout(timer);
   }, []);
-  // Inactivity timer
-  const resetInactivityTimer = () => {
-    if (inactivityTimerRef.current) {
-      clearTimeout(inactivityTimerRef.current);
-    }
-    setShowInactivityTooltip(false);
-    inactivityTimerRef.current = setTimeout(() => {
-      setShowInactivityTooltip(true);
-    }, 10000); // 10 seconds
-  };
-  useEffect(() => {
-    resetInactivityTimer();
-    return () => {
-      if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
-    };
-  }, []);
-  // Data tags configuration
-  const dataTags = [
+
+  const [dataTags, setDataTags] = useState([
     {
       id: "material",
       title: "Material Composition",
@@ -80,7 +64,49 @@ export function HeroSection() {
       },
       color: "from-blue-500/30 to-blue-500/10",
     },
-  ];
+  ]);
+
+  const handleSynthesize = () => {
+    setIsSynthesizing(true);
+    setTimeout(() => {
+      setIsSynthesizing(false);
+      // Update data tags with new random data
+      setDataTags([
+        {
+          id: "material",
+          title: "Material Composition",
+          content: `Flex-weave ${Math.floor(Math.random() * 100)} • React Foam`,
+          position: {
+            top: "25%",
+            left: "35%",
+          },
+          color: "from-red-500/30 to-red-500/10",
+        },
+        {
+          id: "ai",
+          title: "AI Confidence",
+          content: `${(Math.random() * (99.9 - 95) + 95).toFixed(1)}%`,
+          position: {
+            top: "28%",
+            right: "25%",
+          },
+          color: "from-green-500/30 to-green-500/10",
+        },
+        {
+          id: "design",
+          title: "Design Parameters",
+          content: `Lightweight • ${
+            Math.random() > 0.5 ? "Durable" : "Flexible"
+          }`,
+          position: {
+            bottom: "25%",
+            right: "32%",
+          },
+          color: "from-blue-500/30 to-blue-500/10",
+        },
+      ]);
+    }, 25360); // Wait for AIStatusReadout to complete
+  };
   // Headline text animation variants
   const headlineVariants = {
     hidden: {
@@ -118,7 +144,7 @@ export function HeroSection() {
       }}
     >
       {/* Vertical line with dot on the right side of the headline */}
-      <div className="vertical-line absolute top-0 right-0 h-full flex flex-col items-end z-50 pr-8">
+      <div className="vertical-line absolute top-20 -right-3 h-full flex flex-col items-end z-50 pr-8">
         {/* Dot at the top */}
         <div
           className="w-3 h-3 rounded-full bg-white mb-1"
@@ -164,11 +190,16 @@ export function HeroSection() {
       </motion.div>
       {/* Main sneaker display */}
       <div className="absolute inset-0 flex items-center justify-center z-10">
-        <SneakerModel mousePosition={mousePosition} isLoaded={isLoaded} />
+        <SneakerModel
+          mousePosition={mousePosition}
+          isLoaded={isLoaded}
+          isSynthesizing={isSynthesizing}
+        />
       </div>
       {/* Data tags */}
       <AnimatePresence>
         {isLoaded &&
+          !isSynthesizing &&
           dataTags.map((tag) => (
             <DataTag
               key={tag.id}
@@ -180,12 +211,8 @@ export function HeroSection() {
             />
           ))}
       </AnimatePresence>
-      {/* AI Status readout */}
-      <div className="absolute bottom-[20%] left-[10%] z-20">
-        <AIStatusReadout isActive={isLoaded} />
-      </div>
       {/* Main headline */}
-      <div className="absolute right-8 top-1/2 transform -translate-y-1/2 text-right z-20">
+      <div className="absolute right-12 top-1/2 transform -translate-y-1/2 text-right z-20">
         <div className="flex flex-col items-end">
           {titleLines.map((line, i) => (
             <motion.div
@@ -279,28 +306,19 @@ export function HeroSection() {
           <ChevronDownIcon className="h-8 w-8 text-white" />
         </motion.div>
       </motion.div>
-      {/* Inactivity tooltip */}
-      <AnimatePresence>
-        {showInactivityTooltip && (
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: -10,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            exit={{
-              opacity: 0,
-              y: -10,
-            }}
-            className="absolute top-1/4 left-1/2 transform -translate-x-1/2 bg-black/70 backdrop-blur-sm px-4 py-2 rounded-md text-white z-30"
-          >
-            Try moving your cursor or scroll to begin synthesis.
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Synthesize Controls */}
+      <div className="absolute bottom-[20%] left-[10%] z-30 flex flex-col items-start">
+        <motion.button
+          onClick={handleSynthesize}
+          className="px-6 py-3 bg-white/10 text-white font-semibold rounded-lg backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all mb-4"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          disabled={isSynthesizing}
+        >
+          {isSynthesizing ? "Synthesizing..." : "Synthesize"}
+        </motion.button>
+        <AIStatusReadout isActive={isSynthesizing} />
+      </div>
     </div>
   );
 }
