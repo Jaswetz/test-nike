@@ -74,7 +74,7 @@ export function SneakerModel({
     >
       {/* Sneaker image with mask to isolate it */}
       <motion.div
-        className="relative w-[900px] max-w-[95vw]"
+        className="relative w-[900px] max-w-[95vw] md:w-[700px] md:max-w-[80vw] sm:w-[400px] sm:max-w-[98vw]"
         animate={{
           scale: isHovering ? 1.02 : 1,
         }}
@@ -206,6 +206,8 @@ export function SneakerModel({
               }}
               style={{
                 filter: `drop-shadow(0 0 10px rgba(255,255,255,0.2))`,
+                maxWidth: "100%",
+                width: "100%",
               }}
             />
           )}
