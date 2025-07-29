@@ -14,6 +14,10 @@ export function HeroSection() {
   const [isHoveringTitle, setIsHoveringTitle] = useState(false);
   const [isSynthesizing, setIsSynthesizing] = useState(true); // Start in synthesizing state
   const heroRef = useRef<HTMLDivElement>(null);
+  const tagTargetRef = useRef<HTMLDivElement>(null);
+  const [tagTargets, setTagTargets] = useState<{
+    [key: string]: { x: number; y: number };
+  }>({});
 
   // Handle mouse movement
   useEffect(() => {
@@ -27,6 +31,24 @@ export function HeroSection() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
+  // Update target positions when the window is resized
+  useEffect(() => {
+    const updateTargetPositions = () => {
+      if (tagTargetRef.current) {
+        const rect = tagTargetRef.current.getBoundingClientRect();
+        setTagTargets({
+          center: {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2,
+          },
+        });
+      }
+    };
+
+    updateTargetPositions();
+    window.addEventListener("resize", updateTargetPositions);
+    return () => window.removeEventListener("resize", updateTargetPositions);
+  }, [isLoaded, isSynthesizing]);
   // Load animations - synthesis starts immediately
   useEffect(() => {
     const loadTimer = setTimeout(() => setIsLoaded(true), 200);
@@ -244,6 +266,7 @@ export function HeroSection() {
       <div
         className="absolute inset-0 flex items-center z-10"
         style={{ justifyContent: "center", transform: "translateX(-5%)" }}
+        ref={tagTargetRef}
       >
         <SneakerModel
           mousePosition={mousePosition}
@@ -263,6 +286,7 @@ export function HeroSection() {
               position={tag.position}
               colorClasses={tag.color}
               delay={dataTags.findIndex((t) => t.id === tag.id) * 0.2 + 0.5}
+              targetPosition={tagTargets.center}
             />
           ))}
       </AnimatePresence>
