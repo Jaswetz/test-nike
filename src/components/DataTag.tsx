@@ -100,7 +100,7 @@ export function DataTag({
         />
         {/* Connection line */}
         <div
-          className="absolute w-64 h-px bg-gradient-to-r from-white/50 to-transparent"
+          className="absolute h-px bg-gradient-to-r from-white/50 to-transparent"
           style={lineStyle}
         />
       </motion.div>
