@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
 interface DataTagProps {
   title: string;
@@ -20,8 +20,37 @@ export function DataTag({
   delay,
 }: DataTagProps) {
   const [isHovering, setIsHovering] = useState(false);
+  const [lineStyle, setLineStyle] = useState({});
+  const tagRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (tagRef.current) {
+      const rect = tagRef.current.getBoundingClientRect();
+      const tagX = rect.left + rect.width / 2;
+      const tagY = rect.top + rect.height / 2;
+      const screenCenterX = window.innerWidth / 2;
+      const screenCenterY = window.innerHeight / 2;
+
+      const deltaX = screenCenterX - tagX;
+      const deltaY = screenCenterY - tagY;
+
+      const angleRad = Math.atan2(deltaY, deltaX);
+      const angleDeg = angleRad * (180 / Math.PI);
+      const distance =
+        Math.sqrt(deltaX * deltaX + deltaY * deltaY) - rect.width / 2;
+
+      setLineStyle({
+        width: `${distance}px`,
+        transform: `rotate(${angleDeg}deg)`,
+        transformOrigin: "left center",
+        left: "50%",
+        top: "50%",
+      });
+    }
+  }, []);
   return (
     <motion.div
+      ref={tagRef}
       className="absolute z-20"
       style={position}
       initial={{
@@ -71,14 +100,8 @@ export function DataTag({
         />
         {/* Connection line */}
         <div
-          className="absolute w-16 h-px bg-gradient-to-r from-white/50 to-transparent"
-          style={{
-            transform: "rotate(0deg)",
-            transformOrigin: position.left ? "left center" : "right center",
-            left: position.left ? "100%" : "auto",
-            right: position.right ? "100%" : "auto",
-            top: "50%",
-          }}
+          className="absolute w-64 h-px bg-gradient-to-r from-white/50 to-transparent"
+          style={lineStyle}
         />
       </motion.div>
     </motion.div>

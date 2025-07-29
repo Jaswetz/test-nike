@@ -29,9 +29,9 @@ export function HeroSection() {
 
   // Load animations - synthesis starts immediately
   useEffect(() => {
-    const loadTimer = setTimeout(() => setIsLoaded(true), 500);
+    const loadTimer = setTimeout(() => setIsLoaded(true), 200);
 
-    // Stop synthesis after 10 seconds and update data
+    // Stop synthesis after a shorter, more dynamic duration
     const synthesisTimer = setTimeout(() => {
       setIsSynthesizing(false);
       // Update data tags with new random data after synthesis completes
@@ -40,20 +40,14 @@ export function HeroSection() {
           id: "material",
           title: "Material Composition",
           content: `Flex-weave ${Math.floor(Math.random() * 100)} • React Foam`,
-          position: {
-            top: "25%",
-            left: "25%",
-          },
+          position: { top: "25%", left: "25%" },
           color: "from-red-500/30 to-red-500/10",
         },
         {
           id: "ai",
           title: "AI Confidence",
           content: `${(Math.random() * (99.9 - 95) + 95).toFixed(1)}%`,
-          position: {
-            top: "28%",
-            right: "25%",
-          },
+          position: { top: "28%", right: "25%" },
           color: "from-green-500/30 to-green-500/10",
         },
         {
@@ -62,14 +56,11 @@ export function HeroSection() {
           content: `Lightweight • ${
             Math.random() > 0.5 ? "Durable" : "Flexible"
           }`,
-          position: {
-            bottom: "25%",
-            right: "32%",
-          },
+          position: { bottom: "25%", right: "32%" },
           color: "from-blue-500/30 to-blue-500/10",
         },
       ]);
-    }, 10000); // 10 seconds
+    }, 4000); // 4 seconds for a more engaging intro
 
     return () => {
       clearTimeout(loadTimer);
@@ -271,12 +262,12 @@ export function HeroSection() {
               content={tag.content}
               position={tag.position}
               colorClasses={tag.color}
-              delay={dataTags.findIndex((t) => t.id === tag.id) * 0.2 + 1.5}
+              delay={dataTags.findIndex((t) => t.id === tag.id) * 0.2 + 0.5}
             />
           ))}
       </AnimatePresence>
       {/* Main headline */}
-      <div className="absolute right-12 top-1/2 transform -translate-y-1/2 text-right z-20">
+      <div className="absolute right-12 top-0 h-full flex flex-col justify-center text-right z-20">
         <div className="flex flex-col items-end">
           {titleLines.map((line, i) => (
             <motion.div
@@ -285,7 +276,7 @@ export function HeroSection() {
               variants={headlineVariants}
               initial="hidden"
               animate={isLoaded ? "visible" : "hidden"}
-              className="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-[0.9] mb-2 font-space-grotesk"
+              className="text-[9vh] font-bold tracking-tighter leading-[0.9] mb-2 font-space-grotesk"
             >
               {line}
             </motion.div>
@@ -309,7 +300,7 @@ export function HeroSection() {
             }}
             onMouseEnter={() => setIsHoveringTitle(true)}
             onMouseLeave={() => setIsHoveringTitle(false)}
-            className="relative text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter"
+            className="relative text-[9vh] font-bold tracking-tighter leading-[0.9]"
           >
             {/* Halo sparkle background for the synthesized text */}
             <div className="absolute inset-0 -m-8 overflow-hidden">
@@ -382,7 +373,10 @@ export function HeroSection() {
             repeatType: "loop",
             ease: [0.25, 0.1, 0.25, 1.0],
           }}
-          className="relative cursor-pointer transition-all duration-300 ease-out px-6 py-3 bg-white/10 text-white font-semibold rounded-lg backdrop-blur-md border border-white/20 hover:bg-white/20 disabled:opacity-50"
+          className="relative cursor-pointer transition-all duration-300 ease-out px-6 py-3          bg-gradient-to-r
+          from-orange-500
+          via-red-500
+          to-purple-600 text-white font-semibold rounded-lg backdrop-blur-md border border-white/20 hover:bg-white/20 disabled:opacity-50"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           disabled={isSynthesizing}
