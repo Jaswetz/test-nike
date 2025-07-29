@@ -181,14 +181,14 @@ export function HeroSection() {
   return (
     <div
       ref={heroRef}
-      className="relative w-full h-screen flex items-center overflow-hidden"
+      className="relative w-full h-screen flex flex-col md:flex-row items-center justify-center md:justify-start overflow-hidden px-4 md:px-8"
       style={{
         background:
           "linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(9,9,15,1) 100%)",
       }}
     >
       {/* Vertical line with dot on the right side of the headline */}
-      <div className="vertical-line absolute top-20 -right-3 flex flex-col items-center z-50 pr-8">
+      <div className="vertical-line hidden md:flex absolute top-20 -right-3 flex-col items-center z-50 pr-8">
         {/* Dot at the top */}
         <div
           className="w-3 h-3 rounded-full bg-white/40"
@@ -215,7 +215,7 @@ export function HeroSection() {
       <ParticleBackground mousePosition={mousePosition} />
       {/* Project title */}
       <motion.div
-        className="absolute top-6 left-8 font-mono text-4xl font-black tracking-tight z-20"
+        className="relative md:absolute md:top-6 md:left-8 font-mono text-2xl sm:text-responsive-2xl md:text-responsive-3xl lg:text-responsive-4xl font-black tracking-tight z-20 mt-20 md:mt-0 mb-8 md:mb-0 self-start md:self-auto"
         initial={{
           opacity: 0,
           x: -20,
@@ -250,17 +250,14 @@ export function HeroSection() {
         </div>
       </motion.div>
       {/* Main sneaker display */}
-      <div
-        className="absolute inset-0 flex items-center z-10"
-        style={{ justifyContent: "center", transform: "translateX(-5%)" }}
-      >
+      <div className="relative md:absolute md:inset-0 flex items-center justify-center z-10 order-1 md:order-none w-full md:transform md:-translate-x-[5%]">
         <SneakerModel
           mousePosition={mousePosition}
           isLoaded={isLoaded}
           isSynthesizing={isSynthesizing}
         />
       </div>
-      {/* Data tags */}
+      {/* Data tags - Desktop version with absolute positioning */}
       <AnimatePresence>
         {isLoaded &&
           !isSynthesizing &&
@@ -275,8 +272,26 @@ export function HeroSection() {
             />
           ))}
       </AnimatePresence>
+
+      {/* Mobile Data tags - Horizontal list */}
+      <div className="md:hidden w-full flex flex-wrap justify-center gap-3 px-4 mt-4 order-3">
+        {isLoaded &&
+          !isSynthesizing &&
+          dataTags.map((tag, index) => (
+            <motion.div
+              key={tag.id}
+              className={`rounded bg-gradient-to-r ${tag.color} backdrop-blur-sm border border-white/10 p-4 min-w-[120px] flex-grow sm:flex-grow-0`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.2 + 0.5 }}
+            >
+              <div className="text-xs font-medium opacity-70">{tag.title}</div>
+              <div className="text-sm font-bold">{tag.content}</div>
+            </motion.div>
+          ))}
+      </div>
       {/* Main headline */}
-      <div className="absolute right-12 top-1/2 transform -translate-y-1/2 text-right z-20">
+      <div className="relative md:absolute md:right-12 md:top-1/2 md:transform md:-translate-y-1/2 text-center md:text-right z-20 w-full md:w-auto order-2 md:order-none">
         <div className="flex flex-col items-end">
           {titleLines.map((line, i) => (
             <motion.div
@@ -285,7 +300,7 @@ export function HeroSection() {
               variants={headlineVariants}
               initial="hidden"
               animate={isLoaded ? "visible" : "hidden"}
-              className="text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-[0.9] mb-2 font-space-grotesk"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tighter leading-super-tight mb-2 font-space-grotesk"
             >
               {line}
             </motion.div>
@@ -309,7 +324,7 @@ export function HeroSection() {
             }}
             onMouseEnter={() => setIsHoveringTitle(true)}
             onMouseLeave={() => setIsHoveringTitle(false)}
-            className="relative text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter"
+            className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tighter leading-super-tight"
           >
             {/* Halo sparkle background for the synthesized text */}
             <div className="absolute inset-0 -m-8 overflow-hidden">
@@ -365,8 +380,7 @@ export function HeroSection() {
           delay: 1.8,
           duration: 0.4,
         }}
-        className="absolute bottom-8 flex flex-col items-center z-20"
-        style={{ left: "45%", transform: "translateX(-50%)" }}
+        className="fixed md:absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center z-20 w-full md:w-auto px-4 md:px-0"
       >
         <motion.p className="text-gray-400 mb-2 text-sm">
           {isSynthesizing ? "Synthesizing..." : "Click to synthesize"}
@@ -382,7 +396,7 @@ export function HeroSection() {
             repeatType: "loop",
             ease: [0.25, 0.1, 0.25, 1.0],
           }}
-          className="relative cursor-pointer transition-all duration-300 ease-out px-6 py-3 bg-white/10 text-white font-semibold rounded-lg backdrop-blur-md border border-white/20 hover:bg-white/20 disabled:opacity-50"
+          className="relative cursor-pointer transition-all duration-300 ease-out px-6 py-4 sm:py-3 bg-white/10 text-white font-semibold rounded-lg backdrop-blur-md border border-white/20 hover:bg-white/20 disabled:opacity-50 min-w-[160px] text-center"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           disabled={isSynthesizing}
@@ -416,10 +430,7 @@ export function HeroSection() {
       </motion.div>
 
       {/* AI Status Readout - positioned just below middle of screen */}
-      <div
-        className="absolute top-[55%] z-30"
-        style={{ left: "45%", transform: "translateX(-50%)" }}
-      >
+      <div className="fixed md:absolute top-1/2 md:top-[55%] left-1/2 -translate-x-1/2 z-30 w-full md:w-auto px-4 md:px-0">
         <AIStatusReadout isActive={isSynthesizing} />
       </div>
     </div>

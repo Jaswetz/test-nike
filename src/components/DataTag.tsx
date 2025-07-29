@@ -22,7 +22,7 @@ export function DataTag({
   const [isHovering, setIsHovering] = useState(false);
   return (
     <motion.div
-      className="absolute z-20"
+      className="absolute z-20 hidden md:block"
       style={position}
       initial={{
         opacity: 0,
@@ -42,6 +42,8 @@ export function DataTag({
         style={{ padding: "1rem", borderRadius: "1rem" }}
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
+        onTouchStart={() => setIsHovering(true)}
+        onTouchEnd={() => setIsHovering(false)}
         animate={{
           scale: isHovering ? 1.05 : 1,
           boxShadow: isHovering
@@ -51,9 +53,12 @@ export function DataTag({
         transition={{
           duration: 0.2,
         }}
+        whileTap={{ scale: 1.05 }}
       >
-        <div className="text-xs font-medium opacity-70">{title}</div>
-        <div className="text-sm font-bold">{content}</div>
+        <div className="text-xs sm:text-responsive-xs font-medium opacity-70">
+          {title}
+        </div>
+        <div className="text-sm sm:text-responsive-sm font-bold">{content}</div>
         {/* Glow effect on hover */}
         <motion.div
           className="absolute inset-0 rounded pointer-events-none"

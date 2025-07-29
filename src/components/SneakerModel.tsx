@@ -41,6 +41,10 @@ export function SneakerModel({
         rotateY: isHovering ? mousePosition.x * 2 : mousePosition.x * 0.8,
         rotateX: isHovering ? -mousePosition.y * 2 : -mousePosition.y * 0.8,
       }}
+      whileTap={{
+        scale: 1.05,
+        transition: { duration: 0.2 },
+      }}
       transition={{
         opacity: {
           duration: 1.2,
@@ -74,7 +78,7 @@ export function SneakerModel({
     >
       {/* Sneaker image with mask to isolate it */}
       <motion.div
-        className="relative w-[900px] max-w-[95vw]"
+        className="relative w-full md:w-[700px] lg:w-[800px] xl:w-[900px] max-w-[95vw] px-4 md:px-0"
         animate={{
           scale: isHovering ? 1.02 : 1,
         }}
@@ -187,7 +191,7 @@ export function SneakerModel({
               key={currentShoeIndex}
               src={shoeImages[currentShoeIndex]}
               alt="AI Synthesized Sneaker"
-              className="w-full h-auto object-contain relative z-10"
+              className="w-full h-auto object-contain relative z-10 max-h-[50vh] md:max-h-none"
               initial={{ opacity: 0, scale: 0.95, rotateY: -20 }}
               animate={{ opacity: 1, scale: 1, rotateY: 0 }}
               exit={{
