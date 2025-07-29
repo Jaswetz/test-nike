@@ -23,9 +23,23 @@ export function AnalysisUI() {
           y: ["0%", "100%", "0%"],
         }}
         transition={{
-          duration: 3,
+          duration: 4,
           repeat: Infinity,
-          ease: "easeInOut",
+          ease: [0.25, 0.1, 0.25, 1.0],
+        }}
+      />
+      {/* Secondary scanning line with different timing */}
+      <motion.div
+        className="absolute top-0 left-0 w-full h-0.5 bg-cyan-300/30"
+        style={{ filter: "blur(2px)" }}
+        animate={{
+          y: ["0%", "100%", "0%"],
+        }}
+        transition={{
+          duration: 2.5,
+          repeat: Infinity,
+          ease: [0.25, 0.1, 0.25, 1.0],
+          delay: 1,
         }}
       />
       {/* Corner brackets */}

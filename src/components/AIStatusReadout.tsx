@@ -34,9 +34,9 @@ export function AIStatusReadout({ isActive }: AIStatusReadoutProps) {
           // Schedule the next message
           setTimeout(() => {
             setMessageIndex((messageIndex + 1) % messages.length);
-          }, 3000); // Wait 3 seconds before showing the next message
+          }, 800); // Wait 0.8 seconds before showing the next message
         }
-      }, 40); // Type each character with a 40ms delay
+      }, 60); // Type each character with a 60ms delay for smoother feel
       return () => clearInterval(typingInterval);
     };
     const timer = setTimeout(rotateMessages, 500);

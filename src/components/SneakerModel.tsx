@@ -38,27 +38,31 @@ export function SneakerModel({
       animate={{
         opacity: isLoaded ? 1 : 0,
         scale: isLoaded ? 1 : 0.9,
-        rotateY: isHovering ? mousePosition.x * 5 : mousePosition.x * 2,
-        rotateX: isHovering ? -mousePosition.y * 5 : -mousePosition.y * 2,
+        rotateY: isHovering ? mousePosition.x * 2 : mousePosition.x * 0.8,
+        rotateX: isHovering ? -mousePosition.y * 2 : -mousePosition.y * 0.8,
       }}
       transition={{
         opacity: {
-          duration: 0.8,
+          duration: 1.2,
           delay: 0.5,
+          ease: [0.25, 0.1, 0.25, 1.0],
         },
         scale: {
-          duration: 1,
+          duration: 1.5,
           delay: 0.5,
+          ease: [0.25, 0.1, 0.25, 1.0],
         },
         rotateX: {
           type: "spring",
-          stiffness: 100,
-          damping: 30,
+          stiffness: 60,
+          damping: 50,
+          mass: 1.2,
         },
         rotateY: {
           type: "spring",
-          stiffness: 100,
-          damping: 30,
+          stiffness: 60,
+          damping: 50,
+          mass: 1.2,
         },
       }}
       style={{
@@ -70,7 +74,7 @@ export function SneakerModel({
     >
       {/* Sneaker image with mask to isolate it */}
       <motion.div
-        className="relative w-[700px] max-w-[90vw]"
+        className="relative w-[900px] max-w-[95vw]"
         animate={{
           scale: isHovering ? 1.02 : 1,
         }}
@@ -99,11 +103,84 @@ export function SneakerModel({
             <motion.div
               key="loader"
               className="absolute inset-0 flex items-center justify-center z-20"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, scale: 0.3, rotateY: 180 }}
+              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+              exit={{ opacity: 0, scale: 0.3, rotateY: -180 }}
+              transition={{
+                duration: 1.2,
+                ease: [0.25, 0.1, 0.25, 1.0],
+                rotateY: {
+                  duration: 1.2,
+                  ease: [0.25, 0.1, 0.25, 1.0],
+                },
+              }}
             >
-              <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-cyan-400"></div>
+              {/* Outer rotating ring */}
+              <motion.div
+                className="absolute w-20 h-20 border-2 border-transparent border-t-cyan-400 border-r-cyan-400/50 rounded-full"
+                initial={{ scale: 0, rotate: 0 }}
+                animate={{
+                  scale: 1,
+                  rotate: 360,
+                }}
+                transition={{
+                  scale: {
+                    duration: 0.8,
+                    delay: 0.4,
+                    ease: [0.25, 0.1, 0.25, 1.0],
+                  },
+                  rotate: {
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: 0.4,
+                  },
+                }}
+              />
+              {/* Inner pulsing core */}
+              <motion.div
+                className="w-8 h-8 bg-cyan-400/30 rounded-full"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{
+                  scale: [0, 1, 1.2, 1],
+                  opacity: [0, 0.3, 0.8, 0.3],
+                }}
+                transition={{
+                  scale: {
+                    duration: 1,
+                    delay: 0.6,
+                    ease: [0.25, 0.1, 0.25, 1.0],
+                  },
+                  opacity: {
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1.2,
+                  },
+                }}
+              />
+              {/* Middle ring */}
+              <motion.div
+                className="absolute w-14 h-14 border border-cyan-400/40 rounded-full"
+                initial={{ scale: 0, rotate: 0 }}
+                animate={{
+                  scale: 1,
+                  rotate: -360,
+                }}
+                transition={{
+                  scale: {
+                    duration: 0.6,
+                    delay: 0.8,
+                    ease: [0.25, 0.1, 0.25, 1.0],
+                  },
+                  rotate: {
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: 0.8,
+                  },
+                }}
+              />
             </motion.div>
           ) : (
             <motion.img
@@ -111,10 +188,22 @@ export function SneakerModel({
               src={shoeImages[currentShoeIndex]}
               alt="AI Synthesized Sneaker"
               className="w-full h-auto object-contain relative z-10"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0, scale: 0.95, rotateY: -20 }}
+              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+              exit={{
+                opacity: 0,
+                scale: 0.3,
+                rotateY: 20,
+                filter: "blur(4px)",
+              }}
+              transition={{
+                duration: 0.8,
+                ease: [0.25, 0.1, 0.25, 1.0],
+                exit: {
+                  duration: 1.0,
+                  ease: [0.25, 0.1, 0.25, 1.0],
+                },
+              }}
               style={{
                 filter: `drop-shadow(0 0 10px rgba(255,255,255,0.2))`,
               }}
